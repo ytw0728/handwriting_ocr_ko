@@ -1,0 +1,13 @@
+[project]
+name = "handwriting-ocr-ko"
+version = "0.1.0"
+description = "SSU CSE 3-2 Deep Learning Assignment 01, Korean Handwriting OCR"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.10.7",
+    "numpy>=2.3.4",
+    "pillow>=12.0.0",
+    "pydantic>=2.12.3",
+    "tqdm>=4.67.1",
+]
