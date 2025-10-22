@@ -1,7 +1,6 @@
 # coding: utf-8
 import numpy as np
-from common.functions import *
-from common.utils import im2col, col2im
+from src.common.activations import *
 
 class Affine:
     def __init__(self, W, b):

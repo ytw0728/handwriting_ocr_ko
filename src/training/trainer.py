@@ -2,29 +2,41 @@
 import sys, os
 sys.path.append(os.pardir)  # 부모 디렉터리의 파일을 가져올 수 있도록 설정
 import numpy as np
-from optimizers import *
+from src.optimizers.sgd import SGD
+from src.optimizers.momentum import Momentum
+from src.optimizers.nesterov import Nesterov
+from src.optimizers.adagrad import AdaGrad
+from src.optimizers.adam import Adam
+from src.optimizers.rmsprop import RMSprop
 from tqdm import tqdm
 
 class Trainer:
     """신경망 훈련을 대신 해주는 클래스
     """
-    def __init__(self, network, x_train, t_train, x_test, t_test,
-                 epochs=20, mini_batch_size=100,
-                 optimizer='SGD', optimizer_param={'lr':0.01}, 
-                 evaluate_sample_num_per_epoch=None, verbose=True):
+    def __init__(self,
+        network,
+        epochs=20,
+        mini_batch_size=100,
+        optimizer='SGD',
+        optimizer_param={'lr':0.01},
+        evaluate_sample_num_per_epoch=None,
+        verbose=True,
+    ):
         self.network = network
         self.verbose = verbose
-        self.x_train = x_train
-        self.t_train = t_train
-        self.x_test = x_test
-        self.t_test = t_test
         self.epochs = epochs
         self.batch_size = mini_batch_size
         self.evaluate_sample_num_per_epoch = evaluate_sample_num_per_epoch
 
         # optimzer
-        optimizer_class_dict = {'sgd':SGD, 'momentum':Momentum, 'nesterov':Nesterov,
-                                'adagrad':AdaGrad, 'rmsprpo':RMSprop, 'adam':Adam}
+        optimizer_class_dict = {
+            'sgd':SGD,
+            'momentum':Momentum,
+            'nesterov':Nesterov,
+            'adagrad':AdaGrad,
+            'rmsprop':RMSprop,
+            'adam':Adam,
+        }
         self.optimizer = optimizer_class_dict[optimizer.lower()](**optimizer_param)
         
         self.train_size = x_train.shape[0]
@@ -58,7 +70,7 @@ class Trainer:
                 t = self.evaluate_sample_num_per_epoch
                 x_train_sample, t_train_sample = self.x_train[:t], self.t_train[:t]
                 x_test_sample, t_test_sample = self.x_test[:t], self.t_test[:t]
-                
+            
             train_acc = self.network.accuracy(x_train_sample, t_train_sample)
             test_acc = self.network.accuracy(x_test_sample, t_test_sample)
             self.train_acc_list.append(train_acc)

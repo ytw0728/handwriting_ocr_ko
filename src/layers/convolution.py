@@ -1,7 +1,7 @@
 # coding: utf-8
 import numpy as np
-from common.functions import *
-from common.util import im2col, col2im
+from src.common.activations import *
+from src.common.utils import im2col, col2im
 
 class Convolution:
     def __init__(self, W, b, stride=1, pad=0):
