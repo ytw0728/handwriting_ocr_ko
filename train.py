@@ -5,6 +5,7 @@ from src.data.load_label import *
 from src.models.deep_conv_net import DeepConvNet
 from src.optimizers.adam import Adam
 from src.training.output_encoder import *
+import src.numpy as np
 
 if __name__ == "__main__":
     label_files = [os.path.splitext(f)[0] for f in os.listdir("data/train/labels") if f.endswith(".json")]
@@ -26,6 +27,7 @@ if __name__ == "__main__":
     print("max answer length", max_answer_length)
     print("max file size", max_file_size)
     print("max epochs", max_epochs)
+    print("run by ", np.__name__, np.__version__)
     for epoch in tqdm(range(max_epochs)):
         train_loader.trigger()
         try:

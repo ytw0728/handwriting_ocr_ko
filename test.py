@@ -5,6 +5,7 @@ from src.data.load_label import *
 from src.models.deep_conv_net import DeepConvNet
 from src.optimizers.adam import Adam
 from src.training.output_encoder import *
+import src.numpy as np
 
 if __name__ == "__main__":
     label_files = [os.path.splitext(f)[0] for f in os.listdir("data/test/labels") if f.endswith(".json")]
@@ -18,6 +19,7 @@ if __name__ == "__main__":
     train_acc_list, test_acc_list = [], []
 
     print("글자 가짓수", output_size)
+    print("run by ", np.__name__, np.__version__)
     network.load_params("deep_conv_net_params.pkl")
     max_epochs = 10
     for epoch in tqdm(range(max_epochs)):
