@@ -1,6 +1,6 @@
 
 # coding: utf-8
-import numpy as np
+import src.numpy as np
 
 
 def smooth_curve(x):

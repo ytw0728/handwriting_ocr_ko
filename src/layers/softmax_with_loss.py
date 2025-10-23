@@ -1,5 +1,5 @@
 # coding: utf-8
-import numpy as np
+import src.numpy as np
 from src.common.activations import *
 from src.common.losses import *
 

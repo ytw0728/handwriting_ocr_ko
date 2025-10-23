@@ -1,6 +1,6 @@
 import threading
 import queue
-import numpy as np
+import src.numpy as np
 from .load_label import load_label
 from .load_source import load_source
 
@@ -40,7 +40,7 @@ class StreamingDataLoader:
             batch_files = self.file_list[idx: idx+self.batch_size]
 
             imgs_batch: list[np.ndarray[np.float64, np.dtype[np.float64]]] = []
-            metas_batch: list[dict] = []
+            metas_batch: list[(int,int)] = []
             answer_batch: list[np.array[int]] = []
 
             for f in batch_files:
@@ -67,7 +67,7 @@ class StreamingDataLoader:
     def __iter__(self) -> 'StreamingDataLoader':
         return self
 
-    def __next__(self) -> tuple[np.ndarray[np.float32, np.dtype[np.float32]], np.ndarray[dict], np.ndarray[np.ndarray[int]]]:
+    def __next__(self) -> tuple[np.ndarray[np.float32, np.dtype[np.float32]], np.ndarray[(int,int)], np.ndarray[np.ndarray[int]]]:
         batch = self.queue.get()
         if batch is None:
             raise StopIteration

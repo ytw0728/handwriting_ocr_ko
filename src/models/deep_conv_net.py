@@ -1,6 +1,6 @@
 # coding: utf-8
 import pickle
-import numpy as np
+import src.numpy as np
 from src.layers.affine import Affine
 from src.layers.convolution import Convolution
 from src.layers.relu import ReLU
@@ -24,24 +24,24 @@ class DeepConvNet:
         self,
         input_dim:tuple[int,int,int],
         output_size:int,
-        conv_param_1 = {'filter_num':16, 'filter_size':3, 'pad':1, 'stride':1},
-        conv_param_2 = {'filter_num':16, 'filter_size':3, 'pad':1, 'stride':1},
-        conv_param_3 = {'filter_num':32, 'filter_size':3, 'pad':1, 'stride':1},
-        conv_param_4 = {'filter_num':32, 'filter_size':3, 'pad':2, 'stride':1},
-        conv_param_5 = {'filter_num':64, 'filter_size':3, 'pad':1, 'stride':1},
-        conv_param_6 = {'filter_num':64, 'filter_size':3, 'pad':1, 'stride':1},
+        conv_param_1 = {'filter_num':64, 'filter_size':3, 'pad':1, 'stride':1},
+        conv_param_2 = {'filter_num':64, 'filter_size':3, 'pad':1, 'stride':1},
+        conv_param_3 = {'filter_num':128, 'filter_size':3, 'pad':1, 'stride':1},
+        conv_param_4 = {'filter_num':128, 'filter_size':3, 'pad':2, 'stride':1},
+        conv_param_5 = {'filter_num':256, 'filter_size':3, 'pad':1, 'stride':1},
+        conv_param_6 = {'filter_num':256, 'filter_size':3, 'pad':1, 'stride':1},
         hidden_size=50,
     ):
         # 가중치 초기화===========
         # 각 층의 뉴런 하나당 앞 층의 몇 개 뉴런과 연결되는가（TODO: 자동 계산되게 바꿀 것）
         pre_node_nums = np.array([
             input_dim[0]*3*3,
-            16*3*3,
-            16*3*3,
-            32*3*3,
-            32*3*3,
             64*3*3,
-            64*16*32,
+            64*3*3,
+            128*3*3,
+            128*3*3,
+            256*3*3,
+            256*16*32,
             hidden_size,
         ])
         wight_init_scales = np.sqrt(2.0 / pre_node_nums)  # ReLU를 사용할 때의 권장 초깃값
