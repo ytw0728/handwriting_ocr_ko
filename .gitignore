@@ -51,4 +51,4 @@ Thumbs.db
 *.h5
 *.pkl
 *.model
-data
+./data/
