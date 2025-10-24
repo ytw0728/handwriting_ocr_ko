@@ -49,14 +49,14 @@ class DeepConvNet:
         self.params = {}
         pre_channel_num = input_dim[0]
         for idx, conv_param in enumerate([conv_param_1, conv_param_2, conv_param_3, conv_param_4, conv_param_5, conv_param_6]):
-            self.params['W' + str(idx+1)] = wight_init_scales[idx] * np.random.randn(conv_param['filter_num'], pre_channel_num, conv_param['filter_size'], conv_param['filter_size'])
-            self.params['b' + str(idx+1)] = np.zeros(conv_param['filter_num'])
+            self.params['W' + str(idx+1)] = wight_init_scales[idx] * np.random.randn(conv_param['filter_num'], pre_channel_num, conv_param['filter_size'], conv_param['filter_size']).astype(np.float32)
+            self.params['b' + str(idx+1)] = np.zeros(conv_param['filter_num']).astype(np.float32)
             pre_channel_num = conv_param['filter_num']
 
-        self.params['W7'] = wight_init_scales[6] * np.random.randn(64*16*32, hidden_size)
-        self.params['b7'] = np.zeros(hidden_size)
-        self.params['W8'] = wight_init_scales[7] * np.random.randn(hidden_size, output_size)
-        self.params['b8'] = np.zeros(output_size)
+        self.params['W7'] = wight_init_scales[6] * np.random.randn(64*16*32, hidden_size).astype(np.float32)
+        self.params['b7'] = np.zeros(hidden_size).astype(np.float32)
+        self.params['W8'] = wight_init_scales[7] * np.random.randn(hidden_size, output_size).astype(np.float32)
+        self.params['b8'] = np.zeros(output_size).astype(np.float32)    
 
         # 계층 생성===========
         self.layers = []

@@ -9,65 +9,61 @@ class StreamingDataLoader:
         self,
         file_list: list[str],
         output_size:int,
-        max_answer_length:int,
         split:str='train',
         batch_size:int=8,
         resize:tuple[int,int]=(256,128),
         prefetch_batches:int=2,
-        use_meta:bool=True,
-        include_hanja:bool=False,
     ) -> None:
         self.file_list = file_list
         self.split = split
         self.batch_size = batch_size
         self.resize = resize
-        self.use_meta = use_meta
-        self.include_hanja = include_hanja
         self.queue: queue.Queue[tuple[
             np.ndarray[np.float32, np.dtype[np.float32]],
-            np.ndarray[dict],
+            np.ndarray[np.ndarray[int]],
             np.ndarray[np.ndarray[int]],
         ]] = queue.Queue(maxsize=prefetch_batches)
-
         self._stop = threading.Event()
-        
         self.output_size = output_size
-        self.max_answer_length = max_answer_length
 
     def _loader_worker(self) -> None:
         idx = 0
+
+        imgs_batch: list[np.ndarray[np.float64, np.dtype[np.float64]]] = []
+        answer_batch: list[np.array[int]] = []
+        answer_length_batch: list[np.array[int]] = []
+
         while idx < len(self.file_list) and not self._stop.is_set():
-            batch_files = self.file_list[idx: idx+self.batch_size]
+            file = self.file_list[idx]
 
-            imgs_batch: list[np.ndarray[np.float64, np.dtype[np.float64]]] = []
-            metas_batch: list[(int,int)] = []
-            answer_batch: list[np.array[int]] = []
+            label = load_label(self.split, file)
+            if label is None:
+                continue
+            imgs, answers, answer_lengths = load_source(self.split, label, self.resize)
 
-            for f in batch_files:
-                label = load_label(self.split, f)
-                if label is None:
-                    continue
-                imgs, metas, answers = load_source(self.split, label, self.output_size, self.max_answer_length, self.resize, self.include_hanja)
-                
-                imgs_batch.extend(imgs)
-                metas_batch.extend(metas)
-                answer_batch.extend(answers)
-            if len(imgs_batch) > 0:
-                if not self.use_meta:
-                    metas_batch = None  # meta branch 사용 안함
-                self.queue.put((
-                    np.array(imgs_batch, dtype=np.float32),
-                    np.array(metas_batch),
-                    np.array(answer_batch),
-                ))
-            idx += self.batch_size
+            imgs_batch.extend(imgs)
+            answer_batch.extend(answers)
+            answer_length_batch.extend(answer_lengths)
+
+            if len(imgs_batch) >= self.batch_size  or idx == len(self.file_list) -1:
+                imgs_array = np.array(imgs_batch[0:self.batch_size], dtype=np.float32)
+                answer_array = np.array(answer_batch[0:self.batch_size], dtype=np.int32)
+                answer_length_array = np.array(answer_length_batch[0:self.batch_size], dtype=np.int32)
+
+                self.queue.put((imgs_array, answer_array, answer_length_array))
+
+                imgs_batch = imgs_batch[self.batch_size:]
+                answer_batch = answer_batch[self.batch_size:]
+                answer_length_batch = answer_length_batch[self.batch_size:]
+
+            idx += 1
 
         self.queue.put(None)
 
     def __iter__(self) -> 'StreamingDataLoader':
         return self
 
-    def __next__(self) -> tuple[np.ndarray[np.float32, np.dtype[np.float32]], np.ndarray[(int,int)], np.ndarray[np.ndarray[int]]]:
+    def __next__(self) :
         batch = self.queue.get()
         if batch is None:
             raise StopIteration
